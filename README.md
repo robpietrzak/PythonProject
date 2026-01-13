@@ -1,31 +1,34 @@
 # To-Do List CRUD Application
 
 ## Overview
-This project is a **Python Flask CRUD (Create, Read, Update, Delete) application** that serves as a backend API for a To-Do list. It allows users to create tasks, view all tasks, update existing tasks, and delete tasks. The application uses **Flask** for the web framework and **SQLite with SQLAlchemy** for data persistence.
 
-This project was built as a **portfolio project** to demonstrate backend development fundamentals, RESTful API design, and database integration.
+This project is a **full-stack Python Flask CRUD (Create, Read, Update, Delete) application** that allows users to manage a daily to-do list through a **web browser interface**.
+
+Users can create, view, update, and delete tasks using HTML forms, while Flask handles backend logic and database persistence using SQLite and SQLAlchemy.
+
+This project was built as a **portfolio project** to demonstrate full-stack fundamentals, REST concepts, and clean backend/frontend integration.
 
 ---
 
 ## Features
 
-- Create new tasks with a title and estimated duration
-- View all existing tasks
-- Update task details (title, duration, completion status)
-- Delete tasks by ID
-- Persistent storage using SQLite
-- RESTful API endpoints
+* Add tasks using a browser-based form
+* View all tasks in a list
+* Edit/update existing tasks
+* Delete tasks
+* Persistent storage using SQLite
+* Simple and intuitive HTML interface
 
 ---
 
 ## Technologies Used
 
-- **Python 3**
-- **Flask** – Web framework
-- **Flask-SQLAlchemy** – ORM for database interactions
-- **SQLite** – Lightweight relational database
-- **Git & GitHub** – Version control
-- **Postman** – API testing
+* **Python 3**
+* **Flask** – Backend web framework
+* **Flask-SQLAlchemy** – ORM for database management
+* **SQLite** – Relational database
+* **HTML & Jinja2** – Frontend templating
+* **Git & GitHub** – Version control
 
 ---
 
@@ -34,11 +37,14 @@ This project was built as a **portfolio project** to demonstrate backend develop
 ```
 todo-crud-app/
 │
-├── app.py          # Main Flask application and routes
-├── models.py       # Database models
-├── database.py     # Database initialization
+├── app.py              # Flask application and routes
+├── models.py           # Database models
+├── database.py         # Database initialization
+├── templates/          # HTML templates
+│   ├── index.html      # Main task list page
+│   └── edit.html       # Edit task page
 ├── instance/
-│   └── tasks.db    # SQLite database (generated at runtime)
+│   └── tasks.db        # SQLite database (auto-generated)
 ├── requirements.txt
 ├── .gitignore
 └── README.md
@@ -48,146 +54,88 @@ todo-crud-app/
 
 ## How It Works
 
+### Frontend (HTML)
+
+The frontend uses HTML forms and Jinja2 templates to allow users to interact with the application through a browser. User actions such as adding, editing, or deleting tasks send HTTP requests to Flask routes.
+
+### Backend (Flask)
+
+Flask receives requests from the frontend, processes the data, and interacts with the database using SQLAlchemy.
+
 ### Database
-The application uses SQLite as its database. When the application starts, SQLAlchemy automatically creates the database and tables if they do not already exist.
 
-Each task contains:
-- `id` – Unique identifier
-- `title` – Task name
-- `duration` – Estimated time to complete (in minutes)
-- `completed` – Boolean indicating completion status
+Each task includes:
 
----
+* `id` – Unique identifier
+* `title` – Task description
+* `duration` – Estimated time to complete (minutes)
 
-## API Endpoints
-
-### Create a Task
-**POST** `/tasks`
-
-Request Body (JSON):
-```json
-{
-  "title": "Build CRUD app",
-  "duration": 60
-}
-```
-
-Response:
-```json
-{
-  "message": "Task created"
-}
-```
+The database is automatically created when the application starts.
 
 ---
 
-### Read All Tasks
-**GET** `/tasks`
+## Routes and Functionality
 
-Response:
-```json
-{
-  "tasks": [
-    {
-      "id": 1,
-      "title": "Build CRUD app",
-      "duration": 60,
-      "completed": false
-    }
-  ]
-}
-```
-
----
-
-### Update a Task
-**PUT** `/tasks/<id>`
-
-Request Body (JSON):
-```json
-{
-  "title": "Updated task title",
-  "completed": true
-}
-```
-
-Response:
-```json
-{
-  "message": "Task updated"
-}
-```
-
----
-
-### Delete a Task
-**DELETE** `/tasks/<id>`
-
-Response:
-```json
-{
-  "message": "Task deleted"
-}
-```
+| Action      | Route          | Method |
+| ----------- | -------------- | ------ |
+| View tasks  | `/`            | GET    |
+| Add task    | `/add`         | POST   |
+| Edit task   | `/edit/<id>`   | GET    |
+| Update task | `/update/<id>` | POST   |
+| Delete task | `/delete/<id>` | POST   |
 
 ---
 
 ## Running the Application
 
 ### 1. Clone the Repository
+
 ```bash
-git clone https://github.com/robpietrzak/todo-crud-app.git
-cd todo-crud-app
+git clone https://github.com/robpietrzak/PythonProject.git
+cd PythonProject
 ```
 
 ### 2. Create a Virtual Environment
+
 ```bash
 python -m venv venv
-venv\Scripts\activate  # Windows
+venv\\Scripts\\activate  # Windows
 source venv/bin/activate  # macOS/Linux
 ```
 
 ### 3. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 4. Run the Application
+
 ```bash
 python app.py
 ```
 
-The server will start at:
+Open your browser and navigate to:
+
 ```
 http://127.0.0.1:5000
 ```
 
 ---
 
-## Testing the API
-
-This application is designed to be tested using **Postman** or similar API tools.
-
-You can also test the read endpoint directly in a browser:
-```
-http://127.0.0.1:5000/tasks
-```
-
----
-
 ## Future Improvements
 
-- Add user authentication
-- Add daily start/end time tracking
-- Frontend UI using React or HTML/CSS
-- Pagination and filtering
-- Deployment to a cloud service (Render, Fly.io, or AWS)
+* Task completion status (checkbox)
+* Daily start and end time tracking
+* CSS styling for improved UI
+* User authentication
+* Deployment to a cloud platform
 
 ---
 
 ## Author
 
-**Robert Pietrzak**  
+**Robert Pietrzak**
 Entry-Level Software Engineer / Game Developer
 
 ---
@@ -195,4 +143,3 @@ Entry-Level Software Engineer / Game Developer
 ## License
 
 This project is for educational and portfolio purposes.
-

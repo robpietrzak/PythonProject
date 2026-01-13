@@ -1,105 +1,104 @@
-# app.py
-# This file creates and runs the Flask application
+# -------------------------
+# 1️⃣ IMPORTS
+# -------------------------
 
-from flask import Flask, request, jsonify
+# Flask core functionality
+from flask import Flask, render_template, request, redirect
+
+# Database object
 from database import db
+
+# Task model
 from models import Task
 
-# Create the Flask application
+
+# -------------------------
+# 2️⃣ CREATE FLASK APP
+# -------------------------
+
 app = Flask(__name__)
 
-# Configure the database (SQLite file)
+
+# -------------------------
+# 3️⃣ APP CONFIGURATION
+# -------------------------
+
+# Tell Flask where the SQLite database lives
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tasks.db"
+
+# Disable unnecessary tracking (performance optimization)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+
+# -------------------------
+#  INITIALIZE DATABASE
+# -------------------------
 
 # Connect SQLAlchemy to this Flask app
 db.init_app(app)
 
+# Create database tables if they do not exist
+with app.app_context():
+    db.create_all()
+
+
+# =====================================================
+#  ROUTES (CRUD OPERATIONS)
+# =====================================================
+
+# -------------------------
+# READ – Show all tasks
+# -------------------------
 @app.route("/")
 def home():
-    return "Flask CRUD App is running!"
-
-#CREATE TASKS HERE
-@app.route("/tasks", methods=["POST"])
-def create_task():
-    data = request.json
-
-    task = Task(
-        title=data["title"],
-        duration=data["duration"]
-    )
-
-    db.session.add(task)
-    db.session.commit()
-
-    return jsonify({"message": "Task created"}), 201
-
-#READ TASKS HERE
-@app.route("/tasks", methods=["GET"])
-def get_tasks():
-    #Query all tasks from the database
+    # Query all tasks from the database
     tasks = Task.query.all()
 
-    #Convert each task to a dictionary so we can return JSON
-    tasks_list = []
-    for task in tasks:
-        tasks_list.append({
-            "id": task.id,
-            "title": task.title,
-            "duration": task.duration,
-            "completed": task.completed
-         })
+    # Send tasks to the HTML template
+    return render_template("index.html", tasks=tasks)
 
-    # Return the list of tasks as JSON
-    return {"tasks": tasks_list}
 
-# UPDATE TASKS HERE
-@app.route("/tasks/<int:task_id>", methods=["PUT"])
-def update_task(task_id):
-    #Get the task by its ID
-    task = Task.query.get(task_id)
+# -------------------------
+# CREATE – Add a new task
+# -------------------------
+@app.route("/add", methods=["POST"])
+def add_task():
+    # Get form data from HTML
+    title = request.form["title"]
+    duration = request.form["duration"]
 
-    #If task is not found, return 404
-    if not task:
-        return {"message": "Task not found"}, 404
+    # Create a new Task object
+    new_task = Task(
+        title=title,
+        duration=duration
+    )
 
-    #Get the JSON data sent by the client
-    data = request.json
-
-    #update task fields if they exist in the request
-    if "title" in data:
-        task.title = data["title"]
-    if "duration" in data:
-        task.duration = data["duration"]
-    if "completed" in data:
-        task.completed = data["completed"]
-
-    #Commit changes to the database
+    # Save task to the database
+    db.session.add(new_task)
     db.session.commit()
 
-    #Return a success message
-    return {"message": "Task updated"}
+    # Redirect back to home page
+    return redirect("/")
 
-@app.route("/tasks/<int:task_id>", methods=["DELETE"])
+
+# -------------------------
+# DELETE – Remove a task
+# -------------------------
+@app.route("/delete/<int:task_id>", methods=["POST"])
 def delete_task(task_id):
-    #Look up task by ID
-    task = Task.query.get(task_id)
+    # Find task by ID or return 404 if not found
+    task = Task.query.get_or_404(task_id)
 
-    #If the task doesn't exist, return 404
-    if not task:
-        return {"message": "Task not found"}, 404
-
-    #Delete task from database
+    # Delete task from database
     db.session.delete(task)
     db.session.commit()
 
-    #Return success message
-    return {"message": "Task deleted"}
+    # Redirect back to home page
+    return redirect("/")
 
+
+# -------------------------
+# 6️⃣ RUN THE APPLICATION
+# -------------------------
 if __name__ == "__main__":
-    # Create database tables before the app starts
-    with app.app_context():
-        db.create_all()
-
-    # Start the development server
     app.run(debug=True)

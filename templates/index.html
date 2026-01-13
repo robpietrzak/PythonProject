@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List</title>
+</head>
+<body>
+
+<h1>My To-Do List</h1>
+
+<!-- ADD TASK HERE -->
+<form method="POST" action="/add">
+    <input type="text" name="title" placeholder="Task name" required>
+    <input type="number" name="duration" placeholder="Minutes" required>
+    <button type="submit">Add Task</button>
+</form>
+
+<hr>
+
+<!-- DISPLAY TASKS HERE -->
+<ul>
+    {% for task in tasks%}
+        <li>
+            <strong>{{ task.title }}</strong>
+            ({{ task.duration }} minutes
+
+            <!-- DELETE BUTTON -->
+            <form method="POST" action="/delete/{{ task.id }}" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
