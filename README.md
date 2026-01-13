@@ -136,7 +136,7 @@ Response:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/todo-crud-app.git
+git clone https://github.com/robpietrzak/todo-crud-app.git
 cd todo-crud-app
 ```
 
